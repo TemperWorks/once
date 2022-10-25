@@ -30,7 +30,7 @@ class Backtrace
         return $this->trace['class'] ?? null;
     }
 
-    public function getObject(): mixed
+    public function getObject()
     {
         if ($this->globalFunction()) {
             return $this->zeroStack['file'];
@@ -46,7 +46,7 @@ class Backtrace
         }, $this->getArguments());
 
         $prefix = $this->getObjectName() . $this->getFunctionName();
-        if (str_contains($prefix, '{closure}')) {
+        if (strpos($prefix, '{closure}') !== false) {
             $prefix = $this->zeroStack['line'];
         }
 
