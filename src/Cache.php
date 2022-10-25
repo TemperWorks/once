@@ -3,24 +3,24 @@
 namespace Spatie\Once;
 
 use Countable;
-use WeakMap;
+use SplObjectStorage;
 
 class Cache implements Countable
 {
     protected static self $cache;
 
-    public WeakMap $values;
+    public SplObjectStorage $values;
 
     protected bool $enabled = true;
 
-    public static function getInstance(): static
+    public static function getInstance(): self
     {
-        return static::$cache ??= new static;
+        return static::$cache ??= new self;
     }
 
     protected function __construct()
     {
-        $this->values = new WeakMap();
+        $this->values = new SplObjectStorage();
     }
 
     public function has(object $object, string $backtraceHash): bool
@@ -33,12 +33,12 @@ class Cache implements Countable
         return array_key_exists($backtraceHash, $this->values[$object]);
     }
 
-    public function get($object, string $backtraceHash): mixed
+    public function get($object, string $backtraceHash)
     {
         return $this->values[$object][$backtraceHash];
     }
 
-    public function set(object $object, string $backtraceHash, mixed $value): void
+    public function set(object $object, string $backtraceHash, $value): void
     {
         $cached = $this->values[$object] ?? [];
 
@@ -54,7 +54,7 @@ class Cache implements Countable
 
     public function flush(): self
     {
-        $this->values = new WeakMap();
+        $this->values = new SplObjectStorage();
 
         return $this;
     }
